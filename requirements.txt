@@ -1,3 +1,5 @@
 flask
 black
 ipython
+flask-smorest
+python-dotenv
