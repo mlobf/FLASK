@@ -22,6 +22,31 @@ def get_store(store_id):
         abort(404, message="Store not found.")
 
 
+# Store Put Store by Id
+@app.put("/store/<string:store_id>")
+def put_store(store_id):
+    store_id = request.get_json()
+    store = stores[store_id["id"]]
+    return null
+    """ 
+    try:
+        return stores[store_id["id"]], 201
+    except KeyError:
+        abort(404, message="Store not found.")
+    """
+
+
+# Store Delete Store by Id
+@app.delete("/store/<string:store_id>")
+def delete_store(store_id):
+    store_id = request.get_json()
+    try:
+        del stores[store_id["id"]]
+        return stores, 201
+    except KeyError:
+        abort(404, message="Store not found.")
+
+
 # Store Create Store
 @app.post("/store")
 def create_store():
@@ -53,6 +78,16 @@ def get_item(item_id):
     item_id = request.get_json()
     try:
         return items[item_id["id"]]
+    except KeyError:
+        abort(404, message="Item not found.")
+
+
+@app.delete("/item/<string:item_id>")
+def delete_item(item_id):
+    item_id = request.get_json()
+    try:
+        del items[item_id["id"]]
+        return items, 201
     except KeyError:
         abort(404, message="Item not found.")
 
