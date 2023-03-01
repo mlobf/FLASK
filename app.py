@@ -23,40 +23,6 @@ def get_store(store_id):
 
 
 # Store Put Store by Id
-""" 
-{
-	"3deed49d6f894e1c85d215e18dbbf31d": {
-		"id": "3deed49d6f894e1c85d215e18dbbf31d",
-		"name": "Gearonson"
-	},
-	"d719a21abc0741a281f385983fc4acc7": {
-		"id": "d719a21abc0741a281f385983fc4acc7",
-		"name": "Mappin"
-	},
-	"f4744098585041909b8defa41e9372aa": {
-		"id": "f4744098585041909b8defa41e9372aa",
-		"name": "Mesbla"
-	}
-}
-
-{'name': 'Mappin', 'id': '553e761b5d8441518cb6eac6e522e19d'}
-(Pdb) stores[_id].id
-*** AttributeError: 'dict' object has no attribute 'id'
-(Pdb) stores[_id]['id']
-'553e761b5d8441518cb6eac6e522e19d'
-(Pdb) stores[_id]['id']
-'553e761b5d8441518cb6eac6e522e19d'
-(Pdb) stores[_id]
-{'name': 'Mappin', 'id': '553e761b5d8441518cb6eac6e522e19d'}
-(Pdb) stores[_id] = stores_id
-*** NameError: name 'stores_id' is not defined
-(Pdb) stores[_id] = store_id
-(Pdb) stores
-{'553e761b5d8441518cb6eac6e522e19d': {'id': '553e761b5d8441518cb6eac6e522e19d', 'name': 'Americanas Falida'}}
-
-"""
-
-
 @app.put("/store/<string:store_id>")
 def put_store(store_id):
     try:
@@ -116,15 +82,28 @@ def get_item(item_id):
         abort(404, message="Item not found.")
 
 
-""" 
 # Item Put Item
+# Falta add este aqui.
+""" 
+{
+	"id": "2ae72d48cc744cfab0b22cf3041b7d01",
+	"name": "Table",
+	"price": 17.99,
+	"store_id": "0669004317b74fe1b3395fbed112dc80"
+}
+"""
+
+
 @app.put("/item/<string:item_id>")
 def put_item_by_id(item_id):
-    item_id = reuquest.get_json()
-    if items[item_id["id"]]:
-        print("ook ")
-    return null
-"""
+    item_data = request.get_json()
+    try:
+        if item_data["id"] in items:
+            items[item_data["id"]] |= item_data
+            return items
+    except Exception as e:
+        print("erro ", e)
+        abort(404, message=f"item has a problem {e}")
 
 
 # Item delete Item
