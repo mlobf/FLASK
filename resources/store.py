@@ -12,7 +12,7 @@ multiple segments.
 blp = Blueprint("stores", __name__, description="Operations in Stores")
 
 
-@blp.route("/stores/<string:store_id>")
+@blp.route("/store/<string:store_id>")
 class Store(MethodView):
     def get(self, store_id):
         store_id = request.get_json()
@@ -29,10 +29,18 @@ class Store(MethodView):
         except KeyError:
             abort(404, message="Store not found.")
 
+    def put(self, store_id):
+        try:
+            store_id = request.get_json()
+            _id = store_id["id"]
+            stores[store_id["id"]] = store_id
+            return stores, 201
 
-# StoreList
-# --------------------------------------------------------------------------
-@blp.route("/stores")
+        except:
+            abort(404, message="Store not found.")
+
+
+@blp.route("/store")
 class StoreList(MethodView):
     def get(self):
         try:

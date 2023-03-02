@@ -53,6 +53,17 @@ class ItemList(MethodView):
         except Exception as e:
             abort(404, "Bad request.")
 
+    # Item Put Item
+    def put(item_id):
+        item_data = request.get_json()
+        try:
+            if item_data["id"] in items:
+                items[item_data["id"]] |= item_data
+                return items
+        except Exception as e:
+            print("erro ", e)
+            abort(404, message=f"item has a problem {e}")
+
 
 @blp.route("/item/<string:item_id>")
 class Item(MethodView):
