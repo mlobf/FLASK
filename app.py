@@ -83,17 +83,6 @@ def get_item(item_id):
 
 
 # Item Put Item
-# Falta add este aqui.
-""" 
-{
-	"id": "2ae72d48cc744cfab0b22cf3041b7d01",
-	"name": "Table",
-	"price": 17.99,
-	"store_id": "0669004317b74fe1b3395fbed112dc80"
-}
-"""
-
-
 @app.put("/item/<string:item_id>")
 def put_item_by_id(item_id):
     item_data = request.get_json()
@@ -144,7 +133,8 @@ def create_item():
     item_id = uuid.uuid4().hex
     new_item = {**item_data, "id": item_id}
     items[item_id] = new_item
-    return new_item, 201
+
+    return new_item, 203
 
 
 if __name__ == "__main__":
