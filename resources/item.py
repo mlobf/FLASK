@@ -2,7 +2,9 @@ import uuid
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
+from sqlalchemy.exc import SQLAlchemyError
 from schemas import ItemSchema, ItemUpdateSchema
+from models.item import ItemModel
 
 """ 
 A Blueprint is used to divided bussiness logic in
@@ -12,7 +14,6 @@ multiple segments.
 blp = Blueprint("items", __name__, description="Operations on items")
 
 
-# --------------------------------------------------------------------------
 @blp.route("/item")
 class ItemList(MethodView):
     @blp.response(200, ItemSchema(many=True))
@@ -26,24 +27,14 @@ class ItemList(MethodView):
     @blp.arguments(ItemSchema)
     @blp.response(201, ItemSchema)
     def post(self, item_data):
+        item = ItemModel(**item_data)
         try:
-            for item in items.values():
-                if (
-                    item_data["name"] == item["name"]
-                    and item_data["store_id"] == item["store_id"]
-                ):
-                    abort(
-                        404,
-                        message="Item already exist",
-                    )
-
-            item_id = uuid.uuid4().hex
-            new_item = {**item_data, "id": item_id}
-            items[item_id] = new_item
+            db.session.add(item)
+            db.session.commit()
 
             return new_item, 201
-        except Exception as e:
-            abort(404, "Bad request.")
+        except SQLAlchemyError:
+            abort(500, "An error occurred while inserting the item.")
 
     # Item Put Item
     @blp.arguments(ItemUpdateSchema)
