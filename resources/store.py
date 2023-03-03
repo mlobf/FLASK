@@ -3,6 +3,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import stores
+from schemas import StoreSchema, StoreUpdateSchema
 
 """ 
 A Blueprint is used to divided bussiness logic in
@@ -29,9 +30,9 @@ class Store(MethodView):
         except KeyError:
             abort(404, message="Store not found.")
 
+    @blp.arguments(StoreUpdateSchema)
     def put(self, store_id):
         try:
-            store_id = request.get_json()
             _id = store_id["id"]
             stores[store_id["id"]] = store_id
             return stores, 201
@@ -48,13 +49,8 @@ class StoreList(MethodView):
         except KeyError:
             abort(404, message="Store not found.")
 
-    def post(self):
-        store_data = request.get_json()
-        if "name" not in store_data:
-            abort(
-                404,
-                message="Bad request. Please ensure 'name' are inclued in the JSON payload",
-            )
+    @blp.arguments(StoreSchema)
+    def post(self, store_data):
         for store in stores.values():
             if store_data["name"] == store["name"]:
                 abort(400, message="This store already exists")

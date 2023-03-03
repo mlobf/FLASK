@@ -3,6 +3,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from db import items
+from schemas import ItemSchema, ItemUpdateSchema
 
 """ 
 A Blueprint is used to divided bussiness logic in
@@ -22,19 +23,9 @@ class ItemList(MethodView):
             abort(404, message="Items not found.")
 
     # Item Create Item
-    def post(self):
+    @blp.arguments(ItemSchema)
+    def post(self, item_data):
         try:
-            item_data = request.get_json()
-            if (
-                "price" not in item_data
-                or "store_id" not in item_data
-                or "name" not in item_data
-            ):
-                abort(
-                    404,
-                    message="Bad request. Ensure 'price','store_id','name' are included in the JSON payload",
-                )
-
             for item in items.values():
                 if (
                     item_data["name"] == item["name"]
@@ -49,17 +40,16 @@ class ItemList(MethodView):
             new_item = {**item_data, "id": item_id}
             items[item_id] = new_item
 
-            return new_item, 203
+            return new_item, 201
         except Exception as e:
             abort(404, "Bad request.")
 
     # Item Put Item
-    def put(item_id):
-        item_data = request.get_json()
+    @blp.arguments(ItemUpdateSchema)
+    def put(self, item_data):
         try:
-            if item_data["id"] in items:
-                items[item_data["id"]] |= item_data
-                return items
+            items[item_data["id"]] |= item_data
+            return items
         except Exception as e:
             print("erro ", e)
             abort(404, message=f"item has a problem {e}")
