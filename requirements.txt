@@ -3,3 +3,5 @@ black
 ipython
 flask-smorest
 python-dotenv
+sqlalchemy
+flask-sqlalchemy
