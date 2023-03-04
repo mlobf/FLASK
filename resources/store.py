@@ -38,10 +38,8 @@ class Store(MethodView):
 class StoreList(MethodView):
     @blp.response(200, StoreSchema(many=True))
     def get(self):
-        try:
-            return stores.values()
-        except KeyError:
-            abort(404, message="Store not found.")
+        stores = StoreModel.query.all()
+        return stores
 
     @blp.arguments(StoreSchema)
     @blp.response(200, StoreUpdateSchema)

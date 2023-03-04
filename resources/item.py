@@ -20,10 +20,8 @@ blp = Blueprint("items", __name__, description="Operations on items")
 class ItemList(MethodView):
     @blp.response(200, ItemSchema(many=True))
     def get(self):
-        try:
-            return items.values()
-        except KeyError:
-            abort(404, message="Items not found.")
+        items = ItemModel.query.all()
+        return items
 
     # Item Create Item
     @blp.arguments(ItemSchema)
@@ -38,17 +36,6 @@ class ItemList(MethodView):
         except SQLAlchemyError:
             abort(500, "An error occurred while inserting the item.")
 
-    # Item Put Item
-    @blp.arguments(ItemUpdateSchema)
-    @blp.response(200, ItemUpdateSchema)
-    def put(self, item_data):
-        try:
-            items[item_data["id"]] |= item_data
-            return items
-        except Exception as e:
-            print("erro ", e)
-            abort(404, message=f"item has a problem {e}")
-
 
 @blp.route("/item/<string:item_id>")
 class Item(MethodView):
@@ -61,6 +48,17 @@ class Item(MethodView):
         item = ItemModel.query.get_or_404(item_id)
         raise NotImplementedError("Delete Item is not implementing Yet")
 
-    def put(self, item_id):
-        item = ItemModel.query.get_or_404(item_id)
-        raise NotImplementedError("Updating a Item is not implementing Yet")
+    @blp.arguments(ItemUpdateSchema)
+    @blp.response(200, ItemUpdateSchema)
+    def put(self, item_data, item_id):
+        item = ItemModel.query.get(item_id)
+
+        if item:
+            item.price = item_data["price"]
+            item.name = item_data["name"]
+        else:
+            item = ItemModel(id=item_id, **item_data)
+
+        db.session.add(item)
+        db.session.commit()
+        return item
