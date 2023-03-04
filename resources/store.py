@@ -3,6 +3,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError, IntegrityError
+from flask_sqlalchemy import query
 from schemas import StoreSchema, StoreUpdateSchema
 from db import db
 from models import StoreModel
@@ -20,29 +21,17 @@ blp = Blueprint("stores", __name__, description="Operations in Stores")
 class Store(MethodView):
     @blp.response(200, StoreSchema)
     def get(self, store_id):
-        store_id = request.get_json()
-        try:
-            return stores[store_id["id"]], 201
-        except KeyError:
-            abort(404, message="Store not found.")
+        store = StoreModel.query.get_or_404(store_id)
+        return store
 
     def delete(self, store_id):
-        store_id = request.get_json()
-        try:
-            del stores[store_id["id"]]
-            return stores, 201
-        except KeyError:
-            abort(404, message="Store not found.")
+        store = StoreModel.query.get_or_404(store_id)
+        raise NotImplementedError("Delete Store is not implementing Yet")
 
     @blp.arguments(StoreUpdateSchema)
     def put(self, store_id):
-        try:
-            _id = store_id["id"]
-            stores[store_id["id"]] = store_id
-            return stores, 201
-
-        except:
-            abort(404, message="Store not found.")
+        store = StoreModel.query.get_or_404(store_id)
+        raise NotImplementedError("Updating a Store is not implementing Yet")
 
 
 @blp.route("/store")

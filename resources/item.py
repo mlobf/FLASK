@@ -3,6 +3,7 @@ from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from sqlalchemy.exc import SQLAlchemyError
+from flask_sqlalchemy import query
 from schemas import ItemSchema, ItemUpdateSchema
 from db import db
 from models.item import ItemModel
@@ -51,27 +52,15 @@ class ItemList(MethodView):
 
 @blp.route("/item/<string:item_id>")
 class Item(MethodView):
+    @blp.response(200, ItemSchema)
     def get(self, item_id):
-        item_id = request.get_json()
-        try:
-            return items[item_id["id"]]
-        except KeyError:
-            abort(404, message="Item not found.")
+        item = ItemModel.query.get_or_404(item_id)
+        return item
 
     def delete(self, item_id):
-        item_id = request.get_json()
-        try:
-            del items[item_id["id"]]
-            return items, 201
-        except KeyError:
-            abort(404, message="Item not found.")
+        item = ItemModel.query.get_or_404(item_id)
+        raise NotImplementedError("Delete Item is not implementing Yet")
 
     def put(self, item_id):
-        item_data = request.get_json()
-        try:
-            if item_data["id"] in items:
-                items[item_data["id"]] |= item_data
-                return items
-        except Exception as e:
-            print("erro ", e)
-            abort(404, message=f"item has a problem {e}")
+        item = ItemModel.query.get_or_404(item_id)
+        raise NotImplementedError("Updating a Item is not implementing Yet")
