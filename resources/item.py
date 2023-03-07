@@ -32,9 +32,10 @@ class ItemList(MethodView):
             db.session.add(item)
             db.session.commit()
 
-            return item, 201
         except SQLAlchemyError:
             abort(500, "An error occurred while inserting the item.")
+
+        return item, 201
 
 
 @blp.route("/item/<string:item_id>")
