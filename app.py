@@ -1,6 +1,9 @@
 import os
 from flask import Flask
 from flask_smorest import Api
+from flask_jwt_extended import JWTManager
+
+
 from db import db
 import models
 from resources import item, store
@@ -25,7 +28,11 @@ app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 db.init_app(app)
 
 api = Api(app)
-print("teste Debugger")
+
+app.config[
+    "JWT_SECRET_KEY"
+] = "my-Super+Secret@goFlash.com"  # Change this S@#th before make deployment process.
+jwt = JWTManager(app)
 
 
 @app.before_first_request
