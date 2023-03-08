@@ -10,7 +10,7 @@ from resources import item, store
 from resources.item import blp as ItemBluePrint
 from resources.store import blp as StoreBluePrint
 from resources.tag import blp as TagBluePrint
-
+from resources.user import blp as UserBluePrint
 
 app = Flask(__name__)
 
@@ -44,6 +44,7 @@ def create_tables():
 api.register_blueprint(ItemBluePrint)
 api.register_blueprint(StoreBluePrint)
 api.register_blueprint(TagBluePrint)
+api.register_blueprint(UserBluePrint)
 
 
 if __name__ == "__main__":
