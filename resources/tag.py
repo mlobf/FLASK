@@ -90,3 +90,12 @@ class Tag(MethodView):
             400,
             message="Could not be deleted this tag. Make sure tag is not associated with any items,then try again.",
         )
+
+
+@blp.route("/tags")
+class Tags(MethodView):
+    @blp.response(200, TagSchema(many=True))
+    def get(self):
+        tags = TagModel.query.all()
+
+        return tags
