@@ -2,7 +2,7 @@ import os
 from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
-
+from flask_migrate import Migrate
 
 from db import db
 from blocklist import BLOCKLIST
@@ -28,6 +28,9 @@ app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///dat
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 db.init_app(app)
+
+migrate = Migrate(app, db)
+
 
 api = Api(app)
 
@@ -102,7 +105,8 @@ def missing_token_callback(error):
 @app.before_first_request
 def create_tables():
     print("Tables are Created!!!")
-    db.create_all()
+    # Removing as We got Flask-Migrate
+    # db.create_all()
 
 
 api.register_blueprint(ItemBluePrint)
