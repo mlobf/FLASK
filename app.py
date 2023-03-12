@@ -53,6 +53,12 @@ def revoked_token_callback(jwt_heather, jwt_payload):
     )
 
 
+@jwt.needs_fresh_token_loader
+def token_not_fresh(jwt_heather, jwt_payload):
+    return jsonify(
+        {"description": "The token has been revoked", "error": "token revoked"}
+    )
+
 
 @jwt.additional_claims_loader
 def add_claims_to_jwt(identity):
