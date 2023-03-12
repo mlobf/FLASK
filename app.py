@@ -36,6 +36,14 @@ app.config[
 jwt = JWTManager(app)
 
 
+@jwt.additional_claims_loader
+def add_claims_to_jwt(identity):
+    # Change this ...... for something like = Look to database and see whether if user is a admin
+    if identity == 1:
+        return {"is_admin": True}
+    return {"is_admin": False}
+
+
 @jwt.expired_token_loader
 def expired_token_callback(jwt_heather, jwt_payload):
     return (

@@ -1,7 +1,7 @@
 from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt
 from sqlalchemy.exc import SQLAlchemyError
 from flask_sqlalchemy import query
 from schemas import ItemSchema, ItemUpdateSchema
@@ -50,7 +50,12 @@ class Item(MethodView):
 
     @jwt_required()
     def delete(self, item_id):
-        item = StoreModel.query.get_or_404(item_id)
+        item = ItemModel.query.get_or_404(item_id)
+        jwt = get_jwt()
+        if not jwt.get("is_admin"):
+            print("problem at jwt.get()")
+            abort(401, message="Admin privilege required")
+
         db.session.delete(item)
         db.session.commit()
         return {"message": "Store deleted."}
