@@ -5,6 +5,8 @@ from flask_jwt_extended import JWTManager
 
 
 from db import db
+from blocklist import BLOCKLIST
+
 import models
 from resources import item, store
 from resources.item import blp as ItemBluePrint
@@ -34,6 +36,22 @@ app.config[
 ] = "my-Super+Secret@goFlash.com"  # Change this S@#th before make deployment process.
 
 jwt = JWTManager(app)
+
+
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blocklist(jwt_heather, jwt_payload):
+    return jwt_payload["jti"] in BLOCKLIST
+
+
+@jwt.revoked_token_loader
+def revoked_token_callback(jwt_heather, jwt_payload):
+    return (
+        jsonify(
+            {"description": "The token has been revoked", "error": "token revoked"}
+        ),
+        401,
+    )
+
 
 
 @jwt.additional_claims_loader

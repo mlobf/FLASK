@@ -5,9 +5,10 @@ from sqlalchemy.exc import SQLAlchemyError, IntegrityError
 
 from flask_sqlalchemy import query
 from passlib.hash import pbkdf2_sha256
-from flask_jwt_extended import create_access_token
+from flask_jwt_extended import create_access_token, get_jwt, jwt_required
 
 from db import db
+from blocklist import BLOCKLIST
 from schemas import UserSchema
 from models import UserModel
 
@@ -63,3 +64,12 @@ class UserLogin(MethodView):
             return {"access_token": access_token}
 
         abort(401, message="Invalid credentiais.")
+
+
+@blp.route("/logout")
+class UserLogout(MethodView):
+    @jwt_required()
+    def post(self):
+        jti = get_jwt()["jti"]
+        BLOCKLIST.add(jti)
+        return {"message": "Successfuly logged out"}
